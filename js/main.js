@@ -271,7 +271,8 @@ async function pjaxNavigate(url, pushState = true) {
 
 // Init inicial
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 Inicializando Radio Conecta');
+  console.log('🚀 Inicializando Radio Conecta v1.0.0');
+  console.log('📅 Última actualización: 05/11/2025');
   initPageFeatures();
 
   // Interceptar clics en enlaces internos .html

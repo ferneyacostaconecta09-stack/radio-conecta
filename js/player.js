@@ -4,7 +4,7 @@
     return;
   }
 
-  console.log("🎵 Inicializando RadioPlayer...");
+  console.log("🎵 Inicializando RadioPlayer v1.0.0...");
 
   const STREAM_HTTP = "http://186.29.40.51:8000/stream";
   const STREAM_HTTPS = "https://radio-conecta-proxy.fly.dev/";
