@@ -218,6 +218,7 @@ nav ul li a:hover {
   height: auto;
   max-width: 100vw;
   box-sizing: border-box;
+  margin-top: -30px; /* acercar al hero en escritorio */
 }
 
 @media screen and (max-width: 768px) {
