@@ -97,7 +97,8 @@ header {
 }
 
 header .logo img {
-  height: 48px; /* más compacto */
+  height: 35px; /* más compacto */
+  
 }
 
 .menu-toggle {
@@ -2007,7 +2008,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 40px;
+  padding: 10px 40px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
   position: sticky;
   top: 0;
