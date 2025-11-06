@@ -1,5 +1,16 @@
 // Inicializa las características de la página que dependen del DOM actual
 function initPageFeatures() {
+  // ===== Marcar elemento de navegación activo en carga inicial =====
+  const setActiveNav = () => {
+    const current = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
+    document.querySelectorAll('header nav a').forEach(a => {
+      const href = (a.getAttribute('href') || '').toLowerCase();
+      if (href === current) a.classList.add('active');
+      else a.classList.remove('active');
+    });
+  };
+  setActiveNav();
+
   // ===== CARRUSEL (solo si existen slides) =====
   const slides = document.querySelectorAll('.slide');
   if (slides.length > 0) {
@@ -21,8 +32,8 @@ function initPageFeatures() {
     if (nextBtn) nextBtn.addEventListener('click', () => changeSlide(1));
     if (prevBtn) prevBtn.addEventListener('click', () => changeSlide(-1));
 
-    // Auto-rotación del carrusel
-    const autoId = setInterval(() => changeSlide(1), 6000);
+    // Auto-rotación del carrusel cada 10 segundos
+    const autoId = setInterval(() => changeSlide(1), 8000);
     // Guardar para limpiar si recargamos contenido
     window.__carouselInterval && clearInterval(window.__carouselInterval);
     window.__carouselInterval = autoId;

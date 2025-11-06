@@ -1,5 +1,11 @@
 # Control de Versiones - Radio Conecta
 
+## Versión 1.0.1 (05/11/2025)
+- ✅ Optimización de espaciado entre hero y carrusel
+- ✅ Ajuste de márgenes para dispositivos móviles
+- ✅ Reducción de altura del hero en móvil (de 60vh a 30vh)
+- ✅ Mejora en la visualización del carrusel en pantallas pequeñas
+
 ## Versión 1.0.0 (05/11/2025)
 - ✅ Estructura inicial del proyecto
 - ✅ Página de inicio con carrusel y Top 10 preview
