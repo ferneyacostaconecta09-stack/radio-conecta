@@ -1423,7 +1423,7 @@ nav ul li a:hover {
   /* Carrusel */
   .carousel {
     height: 250px;
-    margin: -170px 0 20px 0; /* margen negativo superior para móvil */
+    margin: -140px 0 20px 0; /* margen negativo superior para móvil */
   }
 
   .slide img {
