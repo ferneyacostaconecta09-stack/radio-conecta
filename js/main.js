@@ -238,6 +238,15 @@ window.initPageFeatures = initPageFeatures;
 // ===== Navegación PJAX para mantener el reproductor sonando =====
 async function pjaxNavigate(url, pushState = true) {
   try {
+    // Recordar si el stream estaba sonando antes de reemplazar el DOM
+    const wasPlaying = !!(window.RadioPlayer && window.RadioPlayer.audio && !window.RadioPlayer.audio.paused);
+    // Cerrar/prevenir previews activos antes de navegar
+    try {
+      document.querySelectorAll('.card-top audio').forEach(a => { try { a.pause(); a.currentTime = 0; } catch(_){} });
+    } catch(_){/* noop */}
+    // Limpiar bandera de preview para no bloquear reanudación
+    window.__wasStreamPlayingBeforePreview = false;
+
     console.log('🔄 PJAX navegando a:', url);
     const res = await fetch(url, { credentials: 'same-origin' });
     if (!res.ok) throw new Error('No se pudo cargar la página');
@@ -271,6 +280,11 @@ async function pjaxNavigate(url, pushState = true) {
 
     // Re-inicializar scripts dependientes del DOM actual
     initPageFeatures();
+
+    // Reanudar si veníamos reproduciendo antes de la navegación (sin importar previews previos)
+    if (wasPlaying && window.RadioPlayer && window.RadioPlayer.audio) {
+      try { await window.RadioPlayer.play(); } catch(_) { /* noop */ }
+    }
 
     // Llevar al inicio
     window.scrollTo({ top: 0, behavior: 'smooth' });

@@ -201,6 +201,7 @@
     play: () => { userPaused = false; audio.play(); hideReconnectAlert(); startMonitor(); },
     pause: () => { userPaused = true; audio.pause(); clearInterval(monitorTimer); },
     toggle: () => (audio.paused ? audio.play() : audio.pause()),
+    isPlaying: () => !audio.paused,
     setVolume: (v) => { audio.volume = Math.max(0, Math.min(1, v)); },
     getStreamUrl: () => STREAM_URL
   };
