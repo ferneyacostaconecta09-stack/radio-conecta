@@ -203,10 +203,25 @@ function initPageFeatures() {
   if (rpToggle && window.RadioPlayer) {
     rpToggle.onclick = () => window.RadioPlayer.toggle();
   }
+  // Detectar iOS (no soporta control de volumen por JS)
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  
   if (rpVol && window.RadioPlayer) {
-    rpVol.addEventListener('input', () => window.RadioPlayer.setVolume(Math.min(1, Math.max(0, parseInt(rpVol.value, 10) / 100))));
+    if (isIOS) {
+      // En iOS, ocultar controles de volumen (no funcionan)
+      rpVol.style.display = 'none';
+      if (rpMute) rpMute.style.display = 'none';
+    } else {
+      rpVol.addEventListener('input', () => {
+        const vol = Math.min(1, Math.max(0, parseInt(rpVol.value, 10) / 100));
+        window.RadioPlayer.setVolume(vol);
+        try { localStorage.setItem('rc_volume', vol.toString()); } catch(_) {}
+      });
+    }
   }
-  if (rpMute && window.RadioPlayer) {
+  
+  if (rpMute && window.RadioPlayer && !isIOS) {
     rpMute.onclick = () => {
       window.RadioPlayer.toggleMute();
       rpMute.classList.toggle('muted', audio.volume === 0);

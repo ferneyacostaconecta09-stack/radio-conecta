@@ -1,5 +1,12 @@
 # Control de Versiones - Radio Conecta
 
+## Versión 1.0.2 (08/11/2025)
+- ✅ Reproductor actualizado: detección iOS y ocultar controles de volumen no funcionales
+- ✅ Mensaje informativo para usuarios iPhone/iPad
+- ✅ Botón "Volver" simplificado (navegación directa a inicio)
+- ✅ Ajuste unificado de número de versión en todos los footers
+- 🔧 Limpieza menor de lógica de enfoque entre pestañas
+
 ## Versión 1.0.1 (05/11/2025)
 - ✅ Optimización de espaciado entre hero y carrusel
 - ✅ Ajuste de márgenes para dispositivos móviles

@@ -64,6 +64,9 @@
                 <img class="rp-icon rp-mute-off" src="img/player/volume.svg" alt="Volumen" aria-hidden="true" />
                 <svg class="rp-icon rp-mute-on" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 9v6m6-6v6M5 5l14 14"/></svg>
               </button>
+              <p class="ios-volume-note" style="display:none; font-size: 11px; color: rgba(255,255,255,0.6); margin: 8px 0 0; text-align: center;">
+                📱 En iOS usa los botones de volumen del dispositivo
+              </p>
             </div>
 
           <!-- Efecto visual animado (no sincronizado con el audio) -->
@@ -90,7 +93,7 @@
   <!-- ===== FOOTER ===== -->
   <footer class="footer-radio">
     <p>&copy; 2025 <strong>Radio Conecta</strong> - Más que radio, somos tu compañía</p>
-    <p class="version">v1.0.1 • 05/11/2025</p>
+    <p class="version">v1.0.2 • 08/11/2025</p>
   </footer>
 
   <script src="js/player.js"></script>
@@ -98,6 +101,14 @@
   
   <!-- Script de auto-inicio y debug para el reproductor dedicado + accesibilidad y atajos -->
   <script>
+    // Detectar iOS y mostrar nota sobre control de volumen
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (isIOS) {
+      const note = document.querySelector('.ios-volume-note');
+      if (note) note.style.display = 'block';
+    }
+    
     // Identificar esta pestaña como radio.html
     if (!window.name || !window.name.startsWith('rc-radio-')) {
       window.name = 'rc-radio-' + Date.now();
@@ -148,27 +159,9 @@
       }
     });
     
-    // Botón Volver: buscar pestaña de index o abrir nueva
+    // Botón Volver: navegar a index.html en la misma pestaña
     document.getElementById('btnVolver').addEventListener('click', () => {
-      const requestId = 'req-' + Date.now();
-      let responseReceived = false;
-      
-      const listener = (e) => {
-        if (e.data.type === 'index-found' && e.data.requestId === requestId) {
-          responseReceived = true;
-          bc.removeEventListener('message', listener);
-        }
-      };
-      bc.addEventListener('message', listener);
-      
-      bc.postMessage({ type: 'find-index', requestId });
-      
-      setTimeout(() => {
-        bc.removeEventListener('message', listener);
-        if (!responseReceived) {
-          window.open('index.html', '_blank');
-        }
-      }, 150);
+      window.location.href = 'index.html';
     });
     
     console.log('📻 Script inline del reproductor ejecutándose...');

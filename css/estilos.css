@@ -1150,31 +1150,45 @@ nav ul li a:hover {
 }
 
 /* ======== HERO TOP10 ======== */
+/* Hero Top10 refinado: menos alto, más cerca del header y ancho moderado */
 .hero-top10 {
-  background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.9)),
+  background: linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.85)),
               url('../img/banner-top10.jpg') center/cover no-repeat;
   color: #fff;
   text-align: center;
-  padding: 120px 20px 80px;
+  padding: 56px 20px 36px; /* aún más compacto en alto */
+  margin-top: -16px; /* más cerca del header fijo */
+}
+
+/* Limitar ancho de bloque interno para que el título no se vea demasiado ancho */
+.hero-top10 .overlay { 
+  max-width: 880px; 
+  margin: 0 auto; 
+  padding: 0 20px; 
 }
 
 .hero-top10 h1 {
-  font-size: 2.8em;
-  margin-bottom: 10px;
+  font-size: 2.6em;
+  margin-bottom: 12px;
   color: #ff9500;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
+  line-height: 1.15;
 }
 
 .hero-top10 p {
-  font-size: 1.2em;
-  opacity: 0.9;
+  font-size: 1.15em;
+  opacity: 0.85;
+  max-width: 640px;
+  margin: 0 auto; /* centra y limita ancho del texto descriptivo */
+  line-height: 1.4;
 }
 
 /* ======== SECCIÓN TOP10 ======== */
 .top10-section {
   background: #0b0d3b;
-  padding: 80px 20px; /* 🔹 espacio arriba y abajo */
+  padding: 36px 20px 60px; /* sube el contenido acercándolo al hero */
+  margin-top: -10px; /* solapa sutil con el hero para juntar más */
 }
 
 .contenedor-top10 {
@@ -1644,7 +1658,22 @@ section {
 
   /* Top 10 página */
   .hero-top10 h1 {
-    font-size: 2.2em;
+    font-size: 2.0em; /* un poco más compacto en móvil */
+  }
+
+  .hero-top10 {
+    padding: 42px 14px 22px; /* aún más compacto en móvil */
+    margin-top: -20px; /* más cerca del header */
+  }
+
+  .top10-section {
+    padding: 30px 16px 50px;
+    margin-top: -12px; /* acercar listado al hero en móvil */
+  }
+
+  .hero-top10 .overlay {
+    max-width: 92vw; /* ajusta ancho en pantallas pequeñas */
+    padding: 0 8px;
   }
 
   /* Programación */
