@@ -75,6 +75,46 @@ header {
   transform: scale(1.05);
 }
 
+/* Botón Volver en radio.html */
+.btn-volver {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 183, 255, 0.15);
+  border: 1px solid rgba(0, 183, 255, 0.4);
+  color: #00b7ff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(6px);
+}
+
+.btn-volver:hover {
+  background: rgba(0, 183, 255, 0.25);
+  border-color: rgba(0, 183, 255, 0.6);
+  transform: translateX(-3px);
+}
+
+.btn-volver .icon-back {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.5;
+}
+
+@media screen and (max-width: 768px) {
+  .btn-volver {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+  .btn-volver .icon-back {
+    width: 16px;
+    height: 16px;
+  }
+}
+
 @media screen and (max-width: 768px) {
   /* Mostrar el botón 'Escuchar en vivo' en móviles: compacto y no intrusivo.
      Mantener apariencia de escritorio intacta (esto sólo aplica bajo 768px). */
@@ -674,8 +714,8 @@ nav ul li a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 18px;
-  margin-top: 8px;
+  gap: 22px;
+  margin-top: 4px;
 }
 
 .radio-player .rp-btn {
@@ -683,23 +723,59 @@ nav ul li a:hover {
   border: none;
   background: linear-gradient(135deg, #00b7ff 0%, #0088cc 100%);
   color: #fff;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 6px 16px rgba(0, 183, 255, 0.45);
+  box-shadow: 0 4px 12px rgba(0, 183, 255, 0.35);
   transition: all 0.25s ease;
+  position: relative;
 }
 
-.radio-player .rp-btn:hover { transform: scale(1.06); }
-.radio-player .rp-btn:active { transform: scale(0.96); }
+.radio-player .rp-btn:hover { transform: translateY(-3px); }
+.radio-player .rp-btn:active { transform: scale(0.94); }
 
 .radio-player .rp-icon { width: 26px; height: 26px; }
 .radio-player .rp-pause { display: none; }
 .radio-player.playing .rp-play { display: none; }
 .radio-player.playing .rp-pause { display: block; }
+
+/* Estado mute */
+.radio-player .rp-mute-on { display: none; }
+.radio-player .rp-mute-toggle.muted .rp-mute-off { display: none; }
+.radio-player .rp-mute-toggle.muted .rp-mute-on { display: block; }
+.radio-player .rp-mute-toggle.muted { background: linear-gradient(135deg,#ff4d4f,#c40000); }
+
+/* Buffering / reconectando */
+.radio-player.buffering::after {
+  content: "Conectando...";
+  position: absolute;
+  top: 0; left: 0; right:0; bottom:0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(4px);
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  color: #fff;
+  animation: fadePulse 1.4s ease-in-out infinite;
+  z-index: 4;
+}
+
+@keyframes fadePulse {
+  0%,100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
+/* Foco accesible en botones reproductor */
+.radio-player .rp-btn:focus-visible {
+  outline: 3px solid #ffb300;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(255,179,0,0.35);
+}
 
 .radio-player .rp-volume {
   display: flex;
@@ -1594,291 +1670,9 @@ section {
   }
 }
 
-/* ===== Sticky Player (reproductor persistente profesional) ===== */
-.sticky-player {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 2000;
-  background: linear-gradient(to top, rgba(10, 10, 30, 0.98), rgba(15, 15, 40, 0.96));
-  backdrop-filter: blur(12px);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.6);
-  transition: all 0.3s ease;
-  /* Forzar consistencia visual entre páginas */
-  font-size: 14px;
-  line-height: 1.2;
-  font-family: 'Poppins', sans-serif;
-}
-
-.sticky-player .sp-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 8px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-/* Left Section - Logo & Info */
-.sticky-player .sp-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex: 0 0 auto;
-}
-
-.sticky-player .sp-logo {
-  width: 36px;
-  height: 36px;
-  object-fit: contain;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 3px;
-}
-
-.sticky-player .sp-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.sticky-player .sp-title {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #ffffff;
-  line-height: 1.2;
-}
-
-.sticky-player .sp-subtitle {
-  font-size: 0.7rem;
-  color: #a0a0a0;
-  line-height: 1.2;
-}
-
-/* Center Section - Play Button */
-.sticky-player .sp-center {
-  flex: 0 0 auto;
-}
-
-.sticky-player .sp-btn {
-  cursor: pointer;
-  border: none;
-  background: linear-gradient(135deg, #00b7ff 0%, #0088cc 100%);
-  color: #fff;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 183, 255, 0.4);
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-.sticky-player .sp-btn:hover {
-  transform: scale(1.08);
-  box-shadow: 0 6px 16px rgba(0, 183, 255, 0.6);
-}
-
-.sticky-player .sp-btn:active {
-  transform: scale(0.95);
-}
-
-.sticky-player .sp-icon {
-  width: 20px;
-  height: 20px;
-  transition: all 0.2s ease;
-}
-
-.sticky-player .sp-pause {
-  display: none;
-}
-
-.sticky-player.playing .sp-btn {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
-}
-
-/* Right Section - Volume & Live Badge */
-.sticky-player .sp-right {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  flex: 0 0 auto;
-}
-
-.sticky-player .sp-volume {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.sticky-player .sp-vol-icon {
-  width: 18px;
-  height: 18px;
-  color: #a0a0a0;
-  flex-shrink: 0;
-}
-
-.sticky-player .sp-vol-slider {
-  width: 100px;
-  height: 4px;
-  border-radius: 2px;
-  background: rgba(255, 255, 255, 0.15);
-  outline: none;
-  -webkit-appearance: none;
-  cursor: pointer;
-}
-
-.sticky-player .sp-vol-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: #00b7ff;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 183, 255, 0.5);
-  transition: all 0.2s ease;
-}
-
-.sticky-player .sp-vol-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-  background: #00d4ff;
-}
-
-.sticky-player .sp-vol-slider::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: #00b7ff;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 183, 255, 0.5);
-  transition: all 0.2s ease;
-}
-
-.sticky-player .sp-live-badge {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4px 10px;
-  background: rgba(255, 77, 79, 0.15);
-  border: 1px solid rgba(255, 77, 79, 0.3);
-  border-radius: 20px;
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: #ff4d4f;
-  letter-spacing: 0.5px;
-}
-
-.sticky-player .sp-live-dot {
-  width: 6px;
-  height: 6px;
-  background: #ff4d4f;
-  border-radius: 50%;
-  animation: pulse-live 2s ease-in-out infinite;
-}
-
-@keyframes pulse-live {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.8); }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .sticky-player .sp-container {
-    padding: 7px 14px;
-    gap: 10px;
-  }
-
-  .sticky-player .sp-logo {
-    width: 32px;
-    height: 32px;
-  }
-
-  .sticky-player .sp-title {
-    font-size: 0.8rem;
-  }
-
-  .sticky-player .sp-subtitle {
-    font-size: 0.65rem;
-  }
-
-  .sticky-player .sp-btn {
-    width: 38px;
-    height: 38px;
-  }
-
-  .sticky-player .sp-icon {
-    width: 18px;
-    height: 18px;
-  }
-
-  .sticky-player .sp-vol-slider {
-    width: 70px;
-  }
-}
-
-@media (max-width: 480px) {
-  .sticky-player .sp-container {
-    padding: 6px 10px;
-    gap: 8px;
-  }
-
-  .sticky-player .sp-info {
-    display: none;
-  }
-
-  .sticky-player .sp-volume {
-    gap: 6px;
-  }
-
-  .sticky-player .sp-vol-slider {
-    width: 60px;
-  }
-
-  .sticky-player .sp-vol-icon {
-    width: 16px;
-    height: 16px;
-  }
-
-  .sticky-player .sp-live-badge {
-    padding: 3px 7px;
-    font-size: 0.6rem;
-  }
-
-  .sticky-player .sp-live-dot {
-    width: 5px;
-    height: 5px;
-  }
-  
-  .sticky-player .sp-btn {
-    width: 36px;
-    height: 36px;
-  }
-  
-  .sticky-player .sp-icon {
-    width: 16px;
-    height: 16px;
-  }
-}
-
-/* Asegurar espacio solo para el reproductor sticky */
-body {
-  padding-bottom: 58px !important; /* sticky player más compacto (≈58px) */
-}
-
-@media (max-width: 768px) {
-  body { padding-bottom: 54px !important; }
-}
-
-@media (max-width: 480px) {
-  body { padding-bottom: 52px !important; }
-}
+/* ===== Sticky Player ELIMINADO - ahora se usa solo radio.html en pestaña separada ===== */
+/* Se removieron todos los estilos del sticky player ya que el reproductor 
+   ahora se abre en una pestaña dedicada (radio.html) */
 
 /* Ajustes para pantallas muy pequeñas */
 @media (max-width: 480px) {
@@ -1970,19 +1764,20 @@ html, body {
   letter-spacing: 0.5px;
 }
 
-/* === FOOTER FIJO AJUSTADO === */
+/* === FOOTER FIJO AL FONDO (sin sticky player) === */
 body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   margin: 0;
+  padding-bottom: 0 !important; /* eliminar padding para sticky player */
 }
 
 main, section {
   flex: 1;
 }
 
-/* Footer */
+/* Footer pegado al fondo */
 footer {
   background-color: #000;
   color: #fff;
@@ -1992,6 +1787,7 @@ footer {
   width: 100%;
   position: relative;
   bottom: 0;
+  margin-top: auto; /* empuja el footer al fondo */
 }
 
 /* centrar pagina index */
@@ -2045,25 +1841,22 @@ section {
   background-color: #000;
   color: #ccc;
   text-align: center;
-  padding: 8px 0;
+  padding: 12px 0;
   border-top: 1px solid #222;
   font-size: 0.75em;
-  position: fixed;
-  bottom: 58px; /* pegado justo encima del sticky player más compacto */
-  left: 0;
+  position: relative; /* ya no fixed */
+  bottom: 0;
   width: 100%;
-  z-index: 2001; /* por encima del sticky player (2000) */
+  margin-top: auto; /* se empuja al fondo con flexbox del body */
 }
 
 @media (max-width: 768px) {
-  .footer-radio { bottom: 54px; padding: 6px 0; }
+  .footer-radio { padding: 10px 0; }
 }
 
 @media (max-width: 480px) {
-  .footer-radio { bottom: 52px; padding: 5px 0; }
+  .footer-radio { padding: 8px 0; }
 }
-
-/* En móviles mantenemos el mismo tamaño compacto */
 
 
 

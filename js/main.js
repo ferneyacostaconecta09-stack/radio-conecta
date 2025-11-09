@@ -179,12 +179,18 @@ function initPageFeatures() {
   const rpContainer = document.querySelector('.radio-player');
   const rpToggle = document.querySelector('.rp-play-toggle');
   const rpVol = document.querySelector('.rp-vol-slider');
+  const rpMute = document.querySelector('.rp-mute-toggle');
   const audio = window.RadioPlayer && window.RadioPlayer.audio;
 
   if (audio && rpContainer) {
     const syncState = () => {
       rpContainer.classList.toggle('playing', !audio.paused);
       if (rpVol) rpVol.value = Math.round((audio.volume || 0) * 100);
+      if (rpToggle) {
+        const isPlaying = !audio.paused;
+        rpToggle.setAttribute('aria-label', isPlaying ? 'Pausar' : 'Reproducir');
+        rpToggle.title = isPlaying ? 'Pausar (Space/K)' : 'Reproducir (Space/K)';
+      }
     };
     audio.addEventListener('play', syncState);
     audio.addEventListener('pause', syncState);
@@ -199,6 +205,22 @@ function initPageFeatures() {
   }
   if (rpVol && window.RadioPlayer) {
     rpVol.addEventListener('input', () => window.RadioPlayer.setVolume(Math.min(1, Math.max(0, parseInt(rpVol.value, 10) / 100))));
+  }
+  if (rpMute && window.RadioPlayer) {
+    rpMute.onclick = () => {
+      window.RadioPlayer.toggleMute();
+      rpMute.classList.toggle('muted', audio.volume === 0);
+    };
+  }
+
+  // Marcar buffering visualmente cuando readyState bajo o eventos de error
+  if (rpContainer && audio) {
+    const setBuffering = (on) => rpContainer.classList.toggle('buffering', on);
+    audio.addEventListener('waiting', () => setBuffering(true));
+    audio.addEventListener('stalled', () => setBuffering(true));
+    audio.addEventListener('error', () => setBuffering(true));
+    audio.addEventListener('playing', () => setBuffering(false));
+    audio.addEventListener('canplay', () => setBuffering(false));
   }
 
   // ===== Previews Top 10: pausar stream al reproducir un preview y reanudar al terminar =====
@@ -240,6 +262,8 @@ async function pjaxNavigate(url, pushState = true) {
   try {
     // Recordar si el stream estaba sonando antes de reemplazar el DOM
     const wasPlaying = !!(window.RadioPlayer && window.RadioPlayer.audio && !window.RadioPlayer.audio.paused);
+    // Guardar también en sessionStorage por si una navegación cae en fallback (recarga completa)
+    try { sessionStorage.setItem('rc_was_playing', wasPlaying ? '1' : '0'); } catch(_){ }
     // Cerrar/prevenir previews activos antes de navegar
     try {
       document.querySelectorAll('.card-top audio').forEach(a => { try { a.pause(); a.currentTime = 0; } catch(_){} });
@@ -248,7 +272,14 @@ async function pjaxNavigate(url, pushState = true) {
     window.__wasStreamPlayingBeforePreview = false;
 
     console.log('🔄 PJAX navegando a:', url);
-    const res = await fetch(url, { credentials: 'same-origin' });
+    const controller = new AbortController();
+    // Cancelar navegación previa si existiera
+    if (window.__pjaxController && typeof window.__pjaxController.abort === 'function') {
+      try { window.__pjaxController.abort(); } catch(_){/* noop */}
+    }
+    window.__pjaxController = controller;
+
+    const res = await fetch(url, { credentials: 'same-origin', signal: controller.signal });
     if (!res.ok) throw new Error('No se pudo cargar la página');
     const html = await res.text();
     const parser = new DOMParser();
@@ -283,7 +314,10 @@ async function pjaxNavigate(url, pushState = true) {
 
     // Reanudar si veníamos reproduciendo antes de la navegación (sin importar previews previos)
     if (wasPlaying && window.RadioPlayer && window.RadioPlayer.audio) {
-      try { await window.RadioPlayer.play(); } catch(_) { /* noop */ }
+      // Algunos navegadores necesitan un micro-delay para estabilizar el DOM antes del play
+      setTimeout(async () => {
+        try { await window.RadioPlayer.play(); } catch(_) { /* noop */ }
+      }, 50);
     }
 
     // Llevar al inicio
@@ -298,6 +332,56 @@ async function pjaxNavigate(url, pushState = true) {
 document.addEventListener('DOMContentLoaded', () => {
   console.log('🚀 Inicializando Radio Conecta v1.0.0');
   console.log('📅 Última actualización: 05/11/2025');
+  
+  // Identificar esta pestaña (solo si no es radio.html)
+  const isRadioPage = window.location.pathname.endsWith('radio.html');
+  if (!isRadioPage && (!window.name || !window.name.startsWith('rc-index-'))) {
+    window.name = 'rc-index-' + Date.now();
+  }
+  
+  // Canal de comunicación entre pestañas
+  const bc = new BroadcastChannel('radio-conecta-tabs');
+  
+  // Responder a solicitudes de enfoque
+  bc.onmessage = (e) => {
+    if (e.data.type === 'find-index' && e.data.requestId && !isRadioPage) {
+      bc.postMessage({ type: 'index-found', requestId: e.data.requestId, tabName: window.name });
+      window.focus();
+    }
+  };
+  
+  // Interceptar clics en "Escuchar en vivo" para reutilizar pestaña de radio si existe
+  document.addEventListener('click', (ev) => {
+    const target = ev.target.closest('a');
+    if (!target) return;
+    const href = target.getAttribute('href');
+    const isLiveBtn = target.classList.contains('btn-live') || target.classList.contains('btn-live-header');
+    
+    if (href === 'radio.html' || (isLiveBtn && href && href.includes('radio.html'))) {
+      ev.preventDefault();
+      
+      const requestId = 'req-' + Date.now();
+      let responseReceived = false;
+      
+      const listener = (e) => {
+        if (e.data.type === 'radio-found' && e.data.requestId === requestId) {
+          responseReceived = true;
+          bc.removeEventListener('message', listener);
+        }
+      };
+      bc.addEventListener('message', listener);
+      
+      bc.postMessage({ type: 'find-radio', requestId });
+      
+      setTimeout(() => {
+        bc.removeEventListener('message', listener);
+        if (!responseReceived) {
+          window.open('radio.html', '_blank');
+        }
+      }, 150);
+    }
+  });
+  
   initPageFeatures();
 
   // Interceptar clics en enlaces internos .html
