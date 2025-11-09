@@ -1277,30 +1277,42 @@ nav ul li a:hover {
 
 /* ======== HERO PROGRAMACIÓN ======== */
 .hero-programacion {
-  background: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.9)),
+  background: linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.85)),
               url('../img/banner-programacion.jpg') center/cover no-repeat;
   color: #fff;
   text-align: center;
-  padding: 120px 20px 80px;
+  padding: 56px 20px 36px; /* igual estilo compacto que Top10 */
+  margin-top: -16px; /* acercar al header */
+}
+
+.hero-programacion .overlay {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 .hero-programacion h1 {
-  font-size: 2.8em;
+  font-size: 2.6em;
   color: #ff9500;
   text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 10px;
+  letter-spacing: 1.5px;
+  margin-bottom: 12px;
+  line-height: 1.15;
 }
 
 .hero-programacion p {
-  font-size: 1.2em;
-  opacity: 0.9;
+  font-size: 1.15em;
+  opacity: 0.85;
+  max-width: 640px;
+  margin: 0 auto;
+  line-height: 1.4;
 }
 
 /* ======== SECCIÓN PROGRAMACIÓN ======== */
 .programacion-section {
   background: #0b0d3b;
-  padding: 80px 20px;
+  padding: 36px 20px 60px; /* reducir y acercar al hero */
+  margin-top: -10px; /* juntar visualmente con el hero */
 }
 
 .contenedor-programacion {
@@ -1678,7 +1690,17 @@ section {
 
   /* Programación */
   .hero-programacion h1 {
-    font-size: 2.2em;
+    font-size: 2.0em; /* mismo ajuste móvil que Top10 */
+  }
+
+  .hero-programacion {
+    padding: 42px 14px 22px; /* compacto en móvil */
+    margin-top: -20px;
+  }
+
+  .programacion-section {
+    padding: 30px 16px 50px; /* menos alto en móvil */
+    margin-top: -12px;
   }
 
   .contenedor-programacion {
