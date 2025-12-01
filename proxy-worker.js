@@ -19,7 +19,7 @@ addEventListener('fetch', event => {
 
 async function handleRequest(request) {
   // URL del stream original (HTTP)
-  const STREAM_URL = 'http://186.29.40.51:8000/stream'
+  const STREAM_URL = 'http://200.119.37.140:8000/stream'
   
   // Permitir CORS desde cualquier origen
   const corsHeaders = {
