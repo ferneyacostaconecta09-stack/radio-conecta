@@ -54,6 +54,7 @@
   let userPaused = false;
   let reconnectTimer = null;
   let monitorTimer = null;
+  let monitorFailures = 0; // contador para evitar reconexiones agresivas
 
   // --- 🔔 Alerta visual ---
   function showReconnectAlert(msg = "Reconectando...") {
@@ -204,8 +205,10 @@
         console.log(`🛑 Evento ${evt} ignorado: audio sin fuente`);
         return;
       }
-      console.warn(`⚠️ Evento ${evt}, reconectando...`);
-      reconnect();
+      console.warn(`⚠️ Evento ${evt}, reconectando... (debounce)`);
+      // Desencadenar reconexión con pequeño retraso para evitar bucles
+      clearTimeout(reconnectTimer);
+      reconnectTimer = setTimeout(() => reconnect(), 800);
     });
   });
 
@@ -222,25 +225,43 @@
         clearInterval(monitorTimer);
         return;
       }
-
       const ready = audio.readyState;
       const current = audio.currentTime;
 
+      // Si el readyState es bajo o currentTime inválido, incrementamos contador
       if (ready < 2 || isNaN(current)) {
-        console.warn("⚠️ Monitor: stream detenido. Intentando reconectar...");
-        reconnect();
+        monitorFailures++;
+        console.warn("⚠️ Monitor: readyState bajo o currentTime inválido (fallos:", monitorFailures, ")");
+        // Reintentar sólo si hay 2 fallos consecutivos
+        if (monitorFailures >= 2) {
+          monitorFailures = 0;
+          console.warn("⚠️ Monitor: fallo persistente detectado. Intentando reconectar...");
+          reconnect();
+        }
         return;
       }
 
+      // Si está reproduciendo pero el tiempo se queda en 0, puede estar congelado
       if (audio.paused === false && current === 0) {
-        console.warn("⚠️ Monitor: audio congelado. Reiniciando...");
-        reconnect();
+        monitorFailures++;
+        console.warn("⚠️ Monitor: audio aparentemente congelado (fallos:", monitorFailures, ")");
+        if (monitorFailures >= 2) {
+          monitorFailures = 0;
+          reconnect();
+        }
         return;
       }
 
+      // Estado saludable: resetear contador
+      if (monitorFailures > 0) monitorFailures = 0;
       console.log("🟢 Monitor: stream activo correctamente.");
     }, 30000);
   }
+
+  // Limpiar indicador de reconexión al reproducir correctamente
+  audio.addEventListener('playing', () => { monitorFailures = 0; hideReconnectAlert(); });
+  audio.addEventListener('canplay', () => { monitorFailures = 0; hideReconnectAlert(); });
+  audio.addEventListener('loadeddata', () => { monitorFailures = 0; hideReconnectAlert(); });
 
   // --- UI Sticky Player DESHABILITADO (ahora se usa radio.html en pestaña separada) ---
   function ensureStickyPlayer() {

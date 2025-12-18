@@ -40,34 +40,15 @@
           <p class="radio-subtitle">Tu conexión 24/7 con la mejor música y locutores increíbles</p>
         </div>
 
-        <!-- Reproductor Moderno (UI profesional, controla el reproductor global) -->
-        <div class="radio-player" id="radio-player" role="region" aria-label="Reproductor en vivo Radio Conecta">
-          <div class="rp-header">
-            <div class="rp-left">
-              <img class="rp-cover" src="img/logo/logo.png" alt="Radio Conecta" onerror="this.style.display='none'" />
-              <div class="rp-info">
-                <h3>Radio Conecta</h3>
-                <div class="rp-live" aria-label="Transmisión en vivo"><span class="dot" aria-hidden="true"></span> En vivo</div>
-              </div>
-            </div>
+        <!-- Contenedor del reproductor: centra el widget y efecto visual debajo -->
+        <div class="player-wrap">
+          <!-- Embed del reproductor externo -->
+          <div data-type="newStreamPlayer" data-publicToken="45640a55-cea0-4ffd-9728-4ea30c621608" data-theme="dark" data-color="e81e4d" data-channelId="a09eabe7-b8dd-4c2a-b0ac-1e11cc9e5ae7" data-rendered="false" class="cstrEmbed">
+            <a href="https://www.caster.fm">Shoutcast Hosting</a>
+            <a href="https://www.caster.fm">Stream Hosting</a>
+            <a href="https://www.caster.fm">Radio Server Hosting</a>
           </div>
-
-            <div class="rp-controls">
-              <button class="rp-btn rp-play-toggle" aria-label="Reproducir" title="Reproducir (Space/K)">
-                <img class="rp-icon rp-play" src="img/player/play.svg" alt="Play" aria-hidden="true" />
-                <img class="rp-icon rp-pause" src="img/player/pause.svg" alt="Pausa" aria-hidden="true" />
-              </button>
-              <div class="rp-volume" aria-label="Control de volumen">
-                <input type="range" class="rp-vol-slider" min="0" max="100" step="1" value="80" aria-label="Volumen" />
-              </div>
-              <button class="rp-btn rp-mute-toggle" aria-label="Silenciar" title="Silenciar (M)">
-                <img class="rp-icon rp-mute-off" src="img/player/volume.svg" alt="Volumen" aria-hidden="true" />
-                <svg class="rp-icon rp-mute-on" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 9v6m6-6v6M5 5l14 14"/></svg>
-              </button>
-              <p class="ios-volume-note" style="display:none; font-size: 11px; color: rgba(255,255,255,0.6); margin: 8px 0 0; text-align: center;">
-                📱 En iOS usa los botones de volumen del dispositivo
-              </p>
-            </div>
+          <script src="https://cdn.cloud.caster.fm/widgets/embed.js" async></script>
 
           <!-- Efecto visual animado (no sincronizado con el audio) -->
           <div class="visual-eq" aria-hidden="true">
@@ -160,7 +141,8 @@
     });
     
     // Botón Volver: navegar a index.html en la misma pestaña
-    document.getElementById('btnVolver').addEventListener('click', () => {
+    const btnVolver = document.getElementById('btnVolver');
+    if (btnVolver) btnVolver.addEventListener('click', () => {
       window.location.href = 'index.html';
     });
     
