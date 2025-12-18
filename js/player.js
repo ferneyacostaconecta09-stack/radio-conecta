@@ -7,7 +7,7 @@
   console.log("🎵 Inicializando RadioPlayer v1.0.2...");
 
   const STREAM_HTTP = "http://200.119.37.140:8000/stream";
-  const STREAM_HTTPS = "https://radio-conecta-proxy.fly.dev/";
+  const STREAM_HTTPS = "https://sapircast.caster.fm:14244/Xn1j4?token=095ce1a55ca87728a068afb94e7622c7";
   
   // Detectar protocolo y entorno
   let STREAM_URL;
